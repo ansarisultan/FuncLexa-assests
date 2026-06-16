@@ -89,8 +89,8 @@ export default function AIAssistant({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-fade-in" onClick={onClose}>
-      <div className="panel-3d max-w-2xl w-full max-h-[80vh] flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-xl animate-fade-in" onClick={onClose}>
+      <div className="panel-3d max-w-2xl w-full max-h-[90vh] sm:max-h-[80vh] flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="sticky top-0 bg-[#0F172A]/95 backdrop-blur-xl border-b border-white/10 p-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
@@ -126,7 +126,7 @@ export default function AIAssistant({ isOpen, onClose }) {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[300px] max-h-[400px]">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-8">
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-500/20 to-secondary-500/20 flex items-center justify-center mb-4">
@@ -134,7 +134,7 @@ export default function AIAssistant({ isOpen, onClose }) {
               </div>
               <h3 className="text-lg font-semibold text-white">How can I help you?</h3>
               <p className="text-sm text-slate-400 max-w-md mt-2">
-                I'm your AI assistant for FuncLexa Assets. Ask me about image conversion, 
+                I'm your AI assistant powered by LexaChat for FuncLexa Assets. Ask me about image conversion, 
                 component creation, design themes, or any feature.
               </p>
               
@@ -147,7 +147,7 @@ export default function AIAssistant({ isOpen, onClose }) {
                   >
                     <ChevronUp className="w-3 h-3" /> Hide suggestions
                   </button>
-                  <div className="grid grid-cols-2 gap-2 mt-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
                     {Object.keys(quickActions).map((action) => (
                       <button
                         key={action}
@@ -256,13 +256,13 @@ export default function AIAssistant({ isOpen, onClose }) {
               )}
             </button>
           </div>
-          <div className="flex items-center justify-between mt-2 text-[10px] text-slate-500">
-            <span className="flex items-center gap-2">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mt-2 text-[10px] text-slate-500">
+            <span className="flex items-center gap-1.5 sm:gap-2">
               <span>Powered by</span>
               <span className="text-primary-400 font-semibold">LexaChat AI</span>
               <span>• connected to FuncLexa core</span>
             </span>
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-1.5 sm:gap-2">
               <span>⌘ + Enter to send</span>
               <span>•</span>
               <span>esc to close</span>

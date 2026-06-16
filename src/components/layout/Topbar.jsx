@@ -423,7 +423,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
         </div>
 
         {/* Search bar with live results and recommendations */}
-        <div className="flex-1 flex items-center max-w-xl mx-auto relative px-2">
+        <div className="hidden md:flex flex-1 items-center max-w-xl mx-auto relative px-2">
           <div className={`relative w-full transition-all duration-300 ${isSearchFocused ? 'scale-[1.02]' : ''}`}>
             <div className="absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-300">
               <Search className={`w-4 h-4 ${isSearchFocused ? 'text-primary-400' : 'text-slate-500'}`} />
@@ -474,29 +474,29 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
                             }}
                           >
                             <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              item.type === 'recent' ? 'bg-primary-500/10' :
-                              item.type === 'favorite' ? 'bg-warm-500/10' :
-                              'bg-secondary-500/10'
-                            }`}>
+                                item.type === 'recent' ? 'bg-primary-500/10' :
+                                item.type === 'favorite' ? 'bg-warm-500/10' :
+                                'bg-secondary-500/10'
+                              }`}>
                               <item.icon className={`w-4 h-4 ${
-                                item.type === 'recent' ? 'text-primary-400' :
-                                item.type === 'favorite' ? 'text-warm-400' :
-                                'text-secondary-400'
-                              }`} />
+                                  item.type === 'recent' ? 'text-primary-400' :
+                                  item.type === 'favorite' ? 'text-warm-400' :
+                                  'text-secondary-400'
+                                }`} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-white truncate">{item.label}</span>
                                 {item.badge && (
                                   <span className={`text-[8px] font-medium px-1.5 py-0.5 rounded-full flex-shrink-0 ${
-                                    item.badge === 'Recent' ? 'bg-primary-500/20 text-primary-400' :
-                                    item.badge === 'Favorite' ? 'bg-warm-500/20 text-warm-400' :
-                                    item.badge === 'Popular' ? 'bg-secondary-500/20 text-secondary-400' :
-                                    item.badge === 'Trending' ? 'bg-accent-500/20 text-accent-400' :
-                                    'bg-green-500/20 text-green-400'
-                                  }`}>
-                                    {item.badge}
-                                  </span>
+                                      item.badge === 'Recent' ? 'bg-primary-500/20 text-primary-400' :
+                                      item.badge === 'Favorite' ? 'bg-warm-500/20 text-warm-400' :
+                                      item.badge === 'Popular' ? 'bg-secondary-500/20 text-secondary-400' :
+                                      item.badge === 'Trending' ? 'bg-accent-500/20 text-accent-400' :
+                                      'bg-green-500/20 text-green-400'
+                                    }`}>
+                                      {item.badge}
+                                    </span>
                                 )}
                               </div>
                               {item.subtitle && (
@@ -586,7 +586,16 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
         </div>
 
         {/* Right actions */}
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-1.5 sm:gap-2 ml-auto">
+          {/* Search Button (Mobile only) */}
+          <button 
+            onClick={() => setIsSearchOpen(true)}
+            className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300 hover:scale-110 md:hidden"
+            title="Search"
+          >
+            <Search className="w-4.5 h-4.5 text-slate-400 hover:text-white transition" />
+          </button>
+
           {/* Quick Actions Button */}
           <div className="relative" ref={quickActionsRef}>
             <button 
@@ -599,7 +608,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
             </button>
             
             {isQuickActionsOpen && (
-              <div className="absolute right-0 mt-2 w-72 bg-[#0F172A] border border-white/10 rounded-xl shadow-3d backdrop-blur-xl overflow-hidden z-50 animate-slide-up">
+              <div className="fixed left-4 right-4 top-14 mt-2 md:absolute md:left-auto md:right-0 md:top-full md:w-72 bg-[#0F172A] border border-white/10 rounded-xl shadow-3d backdrop-blur-xl overflow-hidden z-50 animate-slide-up">
                 <div className="p-2">
                   <div className="px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                     <span>Quick Actions</span>
@@ -644,7 +653,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
             </button>
             
             {isNotificationOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-[#0F172A] border border-white/10 rounded-xl shadow-3d backdrop-blur-xl overflow-hidden z-50 animate-slide-up">
+              <div className="fixed left-4 right-4 top-14 mt-2 md:absolute md:left-auto md:right-0 md:top-full md:w-80 bg-[#0F172A] border border-white/10 rounded-xl shadow-3d backdrop-blur-xl overflow-hidden z-50 animate-slide-up">
                 <div className="p-3 border-b border-white/5 flex items-center justify-between">
                   <span className="text-sm font-semibold text-white">Notifications</span>
                   <span className="text-xs text-slate-400">3 new</span>
