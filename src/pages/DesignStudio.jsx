@@ -631,8 +631,8 @@ export default ${componentName};`;
   );
 
   return (
-    <div className={`w-full ${isFullscreen ? 'fixed inset-0 z-[60] bg-[#0A0A0F] p-4 h-screen' : 'h-[calc(100vh-6rem)]'}`}>
-      <div className="flex flex-col h-full gap-4">
+    <div className={`w-full ${isFullscreen ? 'fixed inset-0 z-[60] bg-[#0A0A0F] p-4 overflow-y-auto lg:overflow-hidden lg:h-screen' : 'h-auto lg:h-[calc(100vh-6rem)]'}`}>
+      <div className="flex flex-col lg:h-full gap-4">
         {/* Header */}
         <div className="glass-gradient p-4 relative flex items-center justify-between flex-wrap gap-3 z-40 !overflow-visible">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl animate-float-slow pointer-events-none" />
@@ -764,11 +764,11 @@ export default ${componentName};`;
         </div>
 
         {/* Main Layout */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:min-h-0">
           {/* Left Panel - Controls */}
-          <div className="lg:col-span-3 panel-3d overflow-hidden flex flex-col">
+          <div className="lg:col-span-3 panel-3d overflow-hidden flex flex-col min-h-[550px] lg:min-h-0 lg:h-full">
             <div className="flex border-b border-white/5">
-              {['properties', 'tailwind', '3d'].map(tab => (
+              {['properties', 'effects', '3d'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -778,7 +778,7 @@ export default ${componentName};`;
                       : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {tab === 'properties' ? '🎨 Style' : tab === 'tailwind' ? '📋 Tailwind' : '🌀 3D'}
+                  {tab === 'properties' ? '🎨 Style' : tab === 'effects' ? '✨ FX & Anim' : '🌀 3D'}
                 </button>
               ))}
             </div>
@@ -857,19 +857,19 @@ export default ${componentName};`;
                       suffix="px"
                       onChange={(v) => handleChange('textSize', `${v}`)}
                     />
-                    <SelectControl
+                    {/* <SelectControl
                       label="Weight"
                       value={styles.textWeight}
                       options={['300', '400', '500', '600', '700', '800']}
                       onChange={(v) => handleChange('textWeight', v)}
-                    />
+                    /> */}
                     <SelectControl
                       label="Align"
                       value={styles.textAlign}
                       options={['left', 'center', 'right']}
                       onChange={(v) => handleChange('textAlign', v)}
                     />
-                    <SliderControl
+                    {/* <SliderControl
                       label="Opacity"
                       value={styles.textOpacity}
                       min={0}
@@ -877,7 +877,7 @@ export default ${componentName};`;
                       step={1}
                       suffix="%"
                       onChange={(v) => handleChange('textOpacity', v)}
-                    />
+                    /> */}
                   </ControlGroup>
 
                   {/* Layout */}
@@ -900,7 +900,7 @@ export default ${componentName};`;
                       suffix="px"
                       onChange={(v) => handleChange('paddingY', v)}
                     />
-                    <SliderControl
+                    {/* <SliderControl
                       label="Width"
                       value={styles.width}
                       min={20}
@@ -926,7 +926,7 @@ export default ${componentName};`;
                       step={2}
                       suffix="px"
                       onChange={(v) => handleChange('gap', v)}
-                    />
+                    /> */}
                     <SliderControl
                       label="Radius"
                       value={styles.borderRadius}
@@ -938,6 +938,11 @@ export default ${componentName};`;
                     />
                   </ControlGroup>
 
+                </>
+              )}
+
+              {activeTab === 'effects' && (
+                <>
                   {/* Effects */}
                   <ControlGroup label="Effects" icon={Eye}>
                     <SliderControl
@@ -963,7 +968,7 @@ export default ${componentName};`;
                       suffix="px"
                       onChange={(v) => handleChange('shadowSize', v)}
                     />
-                    <SliderControl
+                    {/* <SliderControl
                       label="Shadow Opacity"
                       value={styles.shadowOpacity}
                       min={0}
@@ -971,7 +976,7 @@ export default ${componentName};`;
                       step={5}
                       suffix="%"
                       onChange={(v) => handleChange('shadowOpacity', v)}
-                    />
+                    /> */}
                     <SliderControl
                       label="Blur"
                       value={styles.blur}
@@ -1018,36 +1023,16 @@ export default ${componentName};`;
                           suffix="ms"
                           onChange={(v) => handleChange('animationDuration', v)}
                         />
-                        <SelectControl
+                        {/* <SelectControl
                           label="Iteration"
                           value={styles.animationIteration}
                           options={['infinite', '1', '2', '3', '4', '5']}
                           onChange={(v) => handleChange('animationIteration', v)}
-                        />
+                        /> */}
                       </>
                     )}
                   </ControlGroup>
                 </>
-              )}
-
-              {activeTab === 'tailwind' && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-400">Tailwind Classes</span>
-                    <button
-                      onClick={copyTailwind}
-                      className="text-[10px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition"
-                    >
-                      {copiedTailwind ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      {copiedTailwind ? 'Copied!' : 'Copy'}
-                    </button>
-                  </div>
-                  <div className="bg-[#0A0A0F]/50 border border-white/5 rounded-xl p-4">
-                    <pre className="text-[10px] font-mono text-green-300 overflow-auto whitespace-pre-wrap break-all leading-relaxed">
-                      {tailwindClasses || 'No classes generated'}
-                    </pre>
-                  </div>
-                </div>
               )}
 
               {activeTab === '3d' && (
@@ -1097,7 +1082,7 @@ export default ${componentName};`;
                     suffix="%"
                     onChange={(v) => handleChange('scale', v)}
                   />
-                  <SliderControl
+                  {/* <SliderControl
                     label="Translate X"
                     value={styles.translateX}
                     min={-100}
@@ -1114,14 +1099,14 @@ export default ${componentName};`;
                     step={5}
                     suffix="px"
                     onChange={(v) => handleChange('translateY', v)}
-                  />
+                  /> */}
                 </ControlGroup>
               )}
             </div>
           </div>
 
           {/* Center Panel - Canvas */}
-          <div className="lg:col-span-6 panel-3d p-6 flex items-center justify-center relative overflow-hidden bg-[#0A0A0F]/50">
+          <div className="lg:col-span-6 panel-3d p-6 flex items-center justify-center relative overflow-hidden bg-[#0A0A0F]/50 min-h-[350px] lg:min-h-0 lg:h-full">
             <div 
               className="absolute inset-0 opacity-[0.03]"
               style={{
@@ -1203,33 +1188,63 @@ export default ${componentName};`;
           </div>
 
           {/* Right Panel - Code */}
-          <div className="lg:col-span-3 panel-3d overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-              <span className="text-[10px] font-medium text-slate-400 flex items-center gap-2">
-                <Code className="w-3 h-3" />
-                React Component
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={copyCode}
-                  className="text-[10px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition"
-                >
-                  {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  {copied ? 'Copied!' : 'Copy'}
-                </button>
-                <button
-                  onClick={downloadComponent}
-                  className="text-[10px] text-secondary-400 hover:text-secondary-300 flex items-center gap-1 transition"
-                >
-                  <Download className="w-3 h-3" />
-                  Save
-                </button>
+          <div className="lg:col-span-3 panel-3d overflow-hidden flex flex-col min-h-[550px] lg:min-h-0 lg:h-full">
+            {/* React Component Section */}
+            <div className="flex-1 flex flex-col min-h-0 border-b border-white/5">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5 bg-white/[0.02]">
+                <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-2 uppercase tracking-wider">
+                  <Code className="w-3.5 h-3.5 text-primary-400" />
+                  React Component
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={copyCode}
+                    className="text-[10px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition"
+                  >
+                    {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                  <button
+                    onClick={downloadComponent}
+                    className="text-[10px] text-secondary-400 hover:text-secondary-300 flex items-center gap-1 transition"
+                    title="Download React Component Code"
+                  >
+                    <Download className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-auto p-3 bg-[#08080C]">
+                <pre className="text-[10px] font-mono text-green-300 whitespace-pre-wrap leading-relaxed">
+                  {code}
+                </pre>
               </div>
             </div>
-            <div className="flex-1 overflow-auto p-4">
-              <pre className="text-[10px] font-mono text-green-300 whitespace-pre-wrap leading-relaxed">
-                {code}
-              </pre>
+
+            {/* Tailwind Component Section */}
+            <div className="flex-1 flex flex-col min-h-0">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5 bg-white/[0.02]">
+                <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-2 uppercase tracking-wider">
+                  <Zap className="w-3.5 h-3.5 text-secondary-400" />
+                  Tailwind Component
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={copyTailwind}
+                    className="text-[10px] text-secondary-400 hover:text-secondary-300 flex items-center gap-1 transition"
+                  >
+                    {copiedTailwind ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    {copiedTailwind ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-auto p-3 bg-[#08080C]">
+                <pre className="text-[10px] font-mono text-cyan-300 whitespace-pre-wrap leading-relaxed">
+                  {`<div className="${tailwindClasses}">
+  <h3>${componentName}</h3>
+  <p>Built with FuncLexa Design Studio</p>
+</div>`}
+                </pre>
+              </div>
             </div>
           </div>
         </div>

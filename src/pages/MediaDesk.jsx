@@ -187,31 +187,39 @@ export default function MediaDesk() {
   return (
     <div className={`space-y-6 animate-slide-up ${isFullscreen ? 'fixed inset-0 z-[60] bg-[#0A0A0F] p-6 overflow-y-auto' : ''}`}>
       {/* Header with Gradient */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500/10 via-secondary-500/5 to-transparent border border-white/5 p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-500/10 via-secondary-500/5 to-transparent border border-white/5 p-5 sm:p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl animate-float-slow" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary-500/10 rounded-full blur-3xl animate-float-medium" />
         
-        <div className="relative flex items-center justify-between flex-wrap gap-4">
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-              FuncLexa Media Desk
-              <span className="text-xs font-normal text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/5 flex items-center gap-1">
-                <Globe className="w-3 h-3" />
-                FuncLexa Client-side
+            <h1 className="text-xl sm:text-2xl font-bold text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <span className="bg-gradient-to-r from-[#31C5DC] via-[#C3DDE3] to-[#6F9CE6] bg-clip-text text-transparent">
+                FuncLexa Media Desk
               </span>
-              {isProcessing && (
-                <span className="text-xs font-normal text-secondary-400 bg-secondary-500/20 px-3 py-1 rounded-full border border-secondary-500/20 flex items-center gap-2 animate-pulse">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  Processing...
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] sm:text-xs font-normal text-slate-400 bg-white/5 px-2.5 py-0.5 rounded-full border border-white/5 flex items-center gap-1">
+                  <Globe className="w-3 h-3 text-cyan-400" />
+                  Client-side
                 </span>
-              )}
+                {isProcessing && (
+                  <span className="text-[10px] sm:text-xs font-normal text-secondary-400 bg-secondary-500/20 px-2.5 py-0.5 rounded-full border border-secondary-500/20 flex items-center gap-1.5 animate-pulse">
+                    <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                    Processing...
+                  </span>
+                )}
+              </div>
             </h1>
-            <p className="text-sm text-slate-400 mt-1 flex items-center gap-2">
+            <p className="text-xs sm:text-sm text-slate-400 mt-1.5 flex flex-wrap items-center gap-1.5">
               <Shield className="w-3.5 h-3.5 text-green-400" />
-              FuncLexa secure processing • 100% private • {selectedFiles.length} files in workspace
+              <span>FuncLexa secure processing</span>
+              <span className="text-slate-600">•</span>
+              <span>100% private</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-primary-400 font-medium">{selectedFiles.length} files in workspace</span>
             </p>
           </div>
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-3 self-end md:self-center">
             <div className="flex items-center gap-1.5 text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <div className={`w-1.5 h-1.5 rounded-full ${isProcessing ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'}`} />
               {isProcessing ? `Processing ${Math.round(processingProgress)}%` : 'Ready'}
@@ -243,44 +251,51 @@ export default function MediaDesk() {
       </div>
 
       {/* Tool switcher with view controls */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          {tools.map(({ id, label, icon: Icon, description }) => (
-            <button
-              key={id}
-              onClick={() => setActiveTool(id)}
-              className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                activeTool === id
-                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-[0_0_30px_rgba(99,102,241,0.3)] scale-[1.02]'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${activeTool === id ? 'text-white' : 'text-slate-500'}`} />
-              <span>{label}</span>
-              <span className="text-[10px] text-slate-400 hidden sm:inline">{description}</span>
-            </button>
-          ))}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.01] border border-white/5 p-2 rounded-2xl">
+        <div className="bg-[#08080C] p-1 rounded-xl flex items-center w-full sm:w-auto gap-1 border border-white/5">
+          {tools.map(({ id, label, icon: Icon, description }) => {
+            const isActive = activeTool === id;
+            return (
+              <button
+                key={id}
+                onClick={() => setActiveTool(id)}
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.25)] scale-[1.01]'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           <button
             onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-            className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300 hover:scale-110"
+            className="hidden sm:inline-flex p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition-all duration-300 hover:scale-105"
+            title="Toggle View Mode"
           >
             {viewMode === 'grid' ? <List className="w-4 h-4 text-slate-400" /> : <Grid className="w-4 h-4 text-slate-400" />}
           </button>
           <button
             onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-            className={`p-2 rounded-xl transition-all duration-300 hover:scale-110 ${
-              showAdvancedSettings ? 'bg-primary-500/20 text-primary-400' : 'hover:bg-white/5 text-slate-400'
+            className={`hidden sm:inline-flex p-2.5 rounded-xl border transition-all duration-300 hover:scale-105 ${
+              showAdvancedSettings 
+                ? 'bg-primary-500/20 text-primary-400 border-primary-500/20' 
+                : 'bg-white/5 hover:bg-white/10 border-white/5 text-slate-400'
             }`}
+            title="Advanced Settings"
           >
             <Settings className="w-4 h-4" />
           </button>
           {selectedFiles.length > 0 && (
             <button
               onClick={clearAllFiles}
-              className="p-2 rounded-xl hover:bg-red-500/10 transition-all duration-300 hover:scale-110 text-slate-400 hover:text-red-400"
+              className="p-2.5 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 hover:border-red-500/20 transition-all duration-300 hover:scale-105 text-red-400"
+              title="Clear Workspace"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -332,33 +347,33 @@ export default function MediaDesk() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* File Workspace */}
         <div className="lg:col-span-2 panel-3d p-5 space-y-3">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2">
             <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2 flex-shrink-0">
-              <FolderOpen className="w-3 h-3" />
-              Workspace
-              <span className="text-[10px] text-slate-500">({selectedFiles.length} files)</span>
+              <FolderOpen className="w-3.5 h-3.5 text-primary-400" />
+              Workspace Files
+              <span className="text-[10px] text-slate-500 lowercase font-normal">({selectedFiles.length} files)</span>
             </h3>
 
-            {/* Workspace Search Input */}
-            {selectedFiles.length > 0 && (
-              <div className="relative flex-1 max-w-xs">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
-                <input
-                  type="text"
-                  placeholder="Search workspace files..."
-                  value={workspaceSearch}
-                  onChange={(e) => setWorkspaceSearch(e.target.value)}
-                  className="w-full bg-[#0F172A] border border-white/10 rounded-lg pl-8 pr-3 py-1 text-xs text-white placeholder-slate-500 focus:ring-1 focus:ring-primary-500 outline-none transition"
-                />
-              </div>
-            )}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 justify-end">
+              {/* Workspace Search Input */}
+              {selectedFiles.length > 0 && (
+                <div className="relative w-full sm:max-w-xs">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
+                  <input
+                    type="text"
+                    placeholder="Search workspace files..."
+                    value={workspaceSearch}
+                    onChange={(e) => setWorkspaceSearch(e.target.value)}
+                    className="w-full bg-[#08080C] border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:ring-1 focus:ring-primary-500 outline-none transition"
+                  />
+                </div>
+              )}
 
-            <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="text-xs text-primary-400 hover:text-primary-300 flex items-center gap-1 transition"
+                className="text-xs bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 text-primary-400 px-3.5 py-1.5 rounded-lg flex items-center justify-center gap-1.5 transition font-medium"
               >
-                <Plus className="w-3 h-3" /> Add Files
+                <Plus className="w-3.5 h-3.5" /> Add Files
               </button>
               <input
                 ref={fileInputRef}
