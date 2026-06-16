@@ -25,9 +25,9 @@ export default function Recent() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Clock className="w-6 h-6 text-brand-400" />
-            Recent Activity
+          <h1 className="text-2xl font-bold text-gradient-cyber flex items-center gap-2">
+            <Clock className="w-6 h-6 text-indigo-400" />
+            FuncLexa Recent Activity
           </h1>
           <p className="text-sm text-slate-400 mt-1">
             Track and manage your recent conversions and operations.

@@ -1,18 +1,53 @@
 import { useState, useEffect } from 'react';
 import { useImageProcessor } from '../../hooks/useImageProcessor';
 import { Download, Shrink } from 'lucide-react';
+import { useWorkbench } from '../../context/WorkbenchContext';
 
 export default function ImageCompressor({ onComplete }) {
   const { compressImage, processing, previewUrl, originalSize, processedSize } = useImageProcessor();
-  const [file, setFile] = useState(null);
+  const { state: workbenchState, dispatch: workbenchDispatch } = useWorkbench();
+  const file = workbenchState.mediaFile;
   const [quality, setQuality] = useState(0.8);
+
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleFileChange = (e) => {
     const f = e.target.files[0];
-    if (f) setFile(f);
+    if (f) {
+      workbenchDispatch({ type: 'SET_MEDIA_FILE', payload: f });
+    }
   };
 
-  const handleCompress = () => { if (file) compressImage(file, quality); };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const f = e.dataTransfer.files[0];
+    if (f) {
+      workbenchDispatch({ type: 'SET_MEDIA_FILE', payload: f });
+    }
+  };
+
+  const handleCompress = () => { 
+    if (file && file instanceof File) {
+      compressImage(file, quality); 
+    }
+  };
+
+  // Auto-compress when file or quality changes
+  useEffect(() => {
+    if (file && file instanceof File) {
+      compressImage(file, quality);
+    }
+  }, [file, quality, compressImage]);
 
   const handleDownload = () => {
     if (previewUrl) {
@@ -28,7 +63,7 @@ export default function ImageCompressor({ onComplete }) {
       const reduction = ((1 - processedSize / originalSize) * 100).toFixed(1);
       onComplete?.({
         fileName: file.name,
-        from: file.type.split('/')[1] || 'unknown',
+        from: file.type?.split('/')[1] || 'unknown',
         to: 'webp',
         size: (processedSize / 1024).toFixed(0),
         reduction,
@@ -42,15 +77,24 @@ export default function ImageCompressor({ onComplete }) {
       {/* Left – upload and controls */}
       <div className="panel p-5 space-y-5">
         <div className="flex items-center gap-3">
-          <Shrink className="w-5 h-5 text-brand-400" />
+          <Shrink className="w-5 h-5 text-primary-400" />
           <span className="text-sm font-medium">Compression</span>
         </div>
-        <label className="block w-full cursor-pointer">
-          <div className="border-2 border-dashed border-white/10 rounded-lg p-4 text-center hover:border-brand-500/50 transition-colors">
-            {file ? file.name : 'Select image'}
-            <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-          </div>
-        </label>
+        <div 
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`border-2 border-dashed rounded-lg p-4 text-center transition-all duration-300 ${
+            isDragging 
+              ? 'border-primary-500 bg-primary-500/10 scale-[1.01]' 
+              : 'border-white/10 hover:border-primary-500/50'
+          }`}
+        >
+          <label className="block w-full cursor-pointer">
+            {file ? file.name : 'Drop or click to upload'}
+            <input type="file" accept="image/*,.svg" onChange={handleFileChange} className="hidden" />
+          </label>
+        </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-400 w-16">Quality</span>
           <input

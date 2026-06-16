@@ -24,6 +24,8 @@ const initialState = {
   svgOutput: '',
   morphosis: { ...defaultMorphosis },
   generatedCode: '',
+  selectedFiles: [],
+  isFullscreen: false,
 };
 
 function workbenchReducer(state, action) {
@@ -44,6 +46,23 @@ function workbenchReducer(state, action) {
       return { ...state, morphosis: { ...state.morphosis, ...action.payload } };
     case 'SET_GENERATED_CODE':
       return { ...state, generatedCode: action.payload };
+    case 'SET_SELECTED_FILES':
+      return { ...state, selectedFiles: action.payload };
+    case 'ADD_FILES': {
+      const newFiles = action.payload.filter(
+        (nf) => !state.selectedFiles.some((sf) => sf.name === nf.name)
+      );
+      return { ...state, selectedFiles: [...state.selectedFiles, ...newFiles] };
+    }
+    case 'REMOVE_FILE':
+      return { 
+        ...state, 
+        selectedFiles: state.selectedFiles.filter((_, i) => i !== action.payload) 
+      };
+    case 'CLEAR_FILES':
+      return { ...state, selectedFiles: [], mediaFile: null };
+    case 'SET_FULLSCREEN':
+      return { ...state, isFullscreen: action.payload };
     default:
       return state;
   }

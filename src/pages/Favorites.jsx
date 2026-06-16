@@ -11,9 +11,9 @@ export default function Favorites() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-gradient-cyber flex items-center gap-2">
           <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
-          Favorites
+          FuncLexa Saved Favorites
         </h1>
         <p className="text-sm text-slate-400 mt-1">
           A collection of design styles and code structures you have saved.

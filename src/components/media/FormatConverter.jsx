@@ -1,21 +1,56 @@
 import { useState, useEffect } from 'react';
 import { useImageProcessor } from '../../hooks/useImageProcessor';
 import { Download, Upload } from 'lucide-react';
+import { useWorkbench } from '../../context/WorkbenchContext';
 
 const formats = ['png', 'jpeg', 'webp', 'ico', 'svg'];
 
 export default function FormatConverter({ onComplete }) {
   const { processImage, processing, previewUrl, originalSize, processedSize } = useImageProcessor();
-  const [file, setFile] = useState(null);
+  const { state: workbenchState, dispatch: workbenchDispatch } = useWorkbench();
+  const file = workbenchState.mediaFile;
   const [targetFormat, setTargetFormat] = useState('webp');
   const [quality, setQuality] = useState(0.92);
 
+  const [isDragging, setIsDragging] = useState(false);
+
   const handleFileChange = (e) => {
     const f = e.target.files[0];
-    if (f) { setFile(f); processImage(f, targetFormat, quality); }
+    if (f) { 
+      workbenchDispatch({ type: 'SET_MEDIA_FILE', payload: f });
+    }
   };
 
-  const handleConvert = () => { if (file) processImage(file, targetFormat, quality); };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const f = e.dataTransfer.files[0];
+    if (f) {
+      workbenchDispatch({ type: 'SET_MEDIA_FILE', payload: f });
+    }
+  };
+
+  const handleConvert = () => { 
+    if (file && file instanceof File) {
+      processImage(file, targetFormat, quality); 
+    }
+  };
+
+  // Auto-process when file, format or quality changes
+  useEffect(() => {
+    if (file && file instanceof File) {
+      processImage(file, targetFormat, quality);
+    }
+  }, [file, targetFormat, quality, processImage]);
   
   const handleDownload = () => {
     if (previewUrl) {
@@ -32,7 +67,7 @@ export default function FormatConverter({ onComplete }) {
       const reduction = ((1 - processedSize / originalSize) * 100).toFixed(1);
       onComplete?.({
         fileName: file.name,
-        from: file.type.split('/')[1] || 'unknown',
+        from: file.type?.split('/')[1] || 'unknown',
         to: targetFormat,
         size: (processedSize / 1024).toFixed(0),
         reduction,
@@ -49,15 +84,24 @@ export default function FormatConverter({ onComplete }) {
       {/* Left – Upload & controls */}
       <div className="panel p-5 space-y-5">
         <div className="flex items-center gap-3">
-          <Upload className="w-5 h-5 text-brand-400" />
+          <Upload className="w-5 h-5 text-primary-400" />
           <span className="text-sm font-medium">Source</span>
         </div>
-        <label className="block w-full cursor-pointer">
-          <div className="border-2 border-dashed border-white/10 rounded-lg p-4 text-center hover:border-brand-500/50 transition-colors">
+        <div 
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`border-2 border-dashed rounded-lg p-4 text-center transition-all duration-300 ${
+            isDragging 
+              ? 'border-primary-500 bg-primary-500/10 scale-[1.01]' 
+              : 'border-white/10 hover:border-primary-500/50'
+          }`}
+        >
+          <label className="block w-full cursor-pointer">
             {file ? file.name : 'Drop or click to upload'}
-            <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-          </div>
-        </label>
+            <input type="file" accept="image/*,.svg" onChange={handleFileChange} className="hidden" />
+          </label>
+        </div>
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-400 w-16">Format</span>

@@ -1,11 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSvgParser } from '../../hooks/useSvgParser';
 import { Wand2 } from 'lucide-react';
+import { useWorkbench } from '../../context/WorkbenchContext';
 
 export default function SvgPurifier() {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const { parse } = useSvgParser();
+  const { state: workbenchState } = useWorkbench();
+  const file = workbenchState.mediaFile;
+
+  useEffect(() => {
+    if (file && file instanceof File && file.name.endsWith('.svg')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setInput(e.target.result);
+        }
+      };
+      reader.readAsText(file);
+    }
+  }, [file]);
 
   const handleClean = () => setOutput(parse(input));
 

@@ -3,22 +3,25 @@ import {
   Copy, Check, Undo, Redo, Download, 
   Palette, Layout, Type, Sparkles, 
   Maximize2, Minimize2, RefreshCw,
-  Move, RotateCw, Eye, Droplet, Sun
+  Move, RotateCw, Eye, Droplet, Sun,
+  Layers, Zap, Grid, Box, Circle, Square,
+  Code, Wand2, Save, Share2, FileJson
 } from 'lucide-react';
+import { useNotifications } from '../context/NotificationContext';
 
 const defaultStyles = {
   // Background
   bgColor: '#0F172A',
   bgOpacity: 100,
   gradientType: 'none',
-  gradientFrom: '#5E6AD2',
+  gradientFrom: '#6366F1',
   gradientTo: '#06B6D4',
   gradientAngle: 135,
   gradientTexture: 'none',
   
   // Text
   textColor: '#FFFFFF',
-  textSize: '20px',
+  textSize: '20',
   textWeight: '600',
   textAlign: 'center',
   textOpacity: 100,
@@ -39,7 +42,7 @@ const defaultStyles = {
   shadowOpacity: '30',
   blur: '0',
   glowSize: '0',
-  glowColor: '#5E6AD2',
+  glowColor: '#6366F1',
   
   // Animation
   animationType: 'none',
@@ -52,29 +55,203 @@ const defaultStyles = {
   scale: '100',
   translateX: '0',
   translateY: '0',
+  perspective: '1000',
+  rotateX: '0',
+  rotateY: '0',
 };
+
+// Theme presets
+const themes = {
+  glassmorphism: {
+    bgColor: 'rgba(255,255,255,0.05)',
+    bgOpacity: 100,
+    gradientType: 'none',
+    gradientTexture: 'none',
+    textColor: '#FFFFFF',
+    textSize: '20',
+    textWeight: '600',
+    paddingX: '32',
+    paddingY: '32',
+    borderRadius: '24',
+    borderWidth: '1',
+    borderColor: 'rgba(255,255,255,0.1)',
+    shadowSize: '20',
+    shadowOpacity: '40',
+    blur: '20',
+    glowSize: '0',
+    animationType: 'none',
+  },
+  neumorphism: {
+    bgColor: '#0F172A',
+    bgOpacity: 100,
+    gradientType: 'none',
+    gradientTexture: 'none',
+    textColor: '#FFFFFF',
+    textSize: '20',
+    textWeight: '600',
+    paddingX: '32',
+    paddingY: '32',
+    borderRadius: '24',
+    borderWidth: '0',
+    borderColor: 'rgba(255,255,255,0)',
+    shadowSize: '16',
+    shadowOpacity: '50',
+    blur: '0',
+    glowSize: '0',
+    animationType: 'none',
+  },
+  cyberpunk: {
+    bgColor: '#0F172A',
+    bgOpacity: 100,
+    gradientType: 'linear',
+    gradientFrom: '#6366F1',
+    gradientTo: '#06B6D4',
+    gradientAngle: 135,
+    gradientTexture: 'grid',
+    textColor: '#FFFFFF',
+    textSize: '24',
+    textWeight: '800',
+    paddingX: '32',
+    paddingY: '32',
+    borderRadius: '16',
+    borderWidth: '2',
+    borderColor: 'rgba(99,102,241,0.3)',
+    shadowSize: '0',
+    shadowOpacity: '0',
+    blur: '0',
+    glowSize: '30',
+    glowColor: '#6366F1',
+    animationType: 'glow',
+    animationDuration: '2000',
+    animationIteration: 'infinite',
+  },
+  minimalist: {
+    bgColor: '#0A0A0F',
+    bgOpacity: 100,
+    gradientType: 'none',
+    gradientTexture: 'none',
+    textColor: '#FFFFFF',
+    textSize: '18',
+    textWeight: '400',
+    paddingX: '24',
+    paddingY: '24',
+    borderRadius: '8',
+    borderWidth: '1',
+    borderColor: 'rgba(255,255,255,0.05)',
+    shadowSize: '0',
+    shadowOpacity: '0',
+    blur: '0',
+    glowSize: '0',
+    animationType: 'none',
+  },
+  warm: {
+    bgColor: '#1A1A2E',
+    bgOpacity: 100,
+    gradientType: 'linear',
+    gradientFrom: '#F59E0B',
+    gradientTo: '#FB7185',
+    gradientAngle: 135,
+    gradientTexture: 'none',
+    textColor: '#FFFFFF',
+    textSize: '22',
+    textWeight: '700',
+    paddingX: '32',
+    paddingY: '32',
+    borderRadius: '20',
+    borderWidth: '1',
+    borderColor: 'rgba(245,158,11,0.2)',
+    shadowSize: '16',
+    shadowOpacity: '30',
+    blur: '0',
+    glowSize: '20',
+    glowColor: '#F59E0B',
+    animationType: 'float',
+    animationDuration: '3000',
+    animationIteration: 'infinite',
+  },
+  dark: {
+    bgColor: '#050816',
+    bgOpacity: 100,
+    gradientType: 'none',
+    gradientTexture: 'none',
+    textColor: '#FFFFFF',
+    textSize: '20',
+    textWeight: '600',
+    paddingX: '28',
+    paddingY: '28',
+    borderRadius: '16',
+    borderWidth: '1',
+    borderColor: 'rgba(255,255,255,0.06)',
+    shadowSize: '12',
+    shadowOpacity: '40',
+    blur: '0',
+    glowSize: '0',
+    animationType: 'none',
+  }
+};
+
+import { useWorkbench } from '../context/WorkbenchContext';
 
 export default function DesignStudio() {
   const [styles, setStyles] = useState(defaultStyles);
   const [copied, setCopied] = useState(false);
   const [copiedTailwind, setCopiedTailwind] = useState(false);
   const [activeTab, setActiveTab] = useState('properties');
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  
+  const { state: workbenchState, dispatch: workbenchDispatch } = useWorkbench();
+  const isFullscreen = workbenchState.isFullscreen;
+  const setIsFullscreen = (val) => workbenchDispatch({ type: 'SET_FULLSCREEN', payload: val });
+
   const [componentName, setComponentName] = useState('MyComponent');
   const [isHovered, setIsHovered] = useState(false);
+  const [showThemes, setShowThemes] = useState(false);
   const canvasRef = useRef(null);
+  const { addNotification } = useNotifications();
 
   // History
   const [history, setHistory] = useState([defaultStyles]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const isUndoRedoRef = useRef(false);
 
   useEffect(() => {
-    if (historyIndex < history.length - 1) {
-      setHistory(prev => prev.slice(0, historyIndex + 1));
+    // Write styles to localStorage for AI Assistant context-awareness
+    localStorage.setItem('funclexa_studio_styles', JSON.stringify(styles));
+
+    if (isUndoRedoRef.current) {
+      isUndoRedoRef.current = false;
+      return;
     }
-    setHistory(prev => [...prev, styles]);
-    setHistoryIndex(prev => prev + 1);
-  }, [styles]);
+
+    if (history.length > 0 && history[historyIndex] === styles) {
+      return;
+    }
+
+    const newHistory = history.slice(0, historyIndex + 1);
+    setHistory([...newHistory, styles]);
+    setHistoryIndex(newHistory.length);
+  }, [styles, history, historyIndex]);
+
+  // Keyboard shortcuts for Undo / Redo
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Check for Ctrl+Z or Cmd+Z
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+          handleUndo();
+        }
+      }
+      // Check for Ctrl+Y or Cmd+Y
+      if ((e.metaKey || e.ctrlKey) && e.key === 'y') {
+        e.preventDefault();
+        if (historyIndex < history.length - 1) {
+          handleRedo();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [historyIndex, history]);
 
   const handleChange = (key, value) => {
     setStyles(prev => ({ ...prev, [key]: value }));
@@ -82,20 +259,102 @@ export default function DesignStudio() {
 
   const handleUndo = () => {
     if (historyIndex > 0) {
-      setHistoryIndex(prev => prev - 1);
-      setStyles(history[historyIndex - 1]);
+      isUndoRedoRef.current = true;
+      const prevIndex = historyIndex - 1;
+      setHistoryIndex(prevIndex);
+      setStyles(history[prevIndex]);
+      addNotification({
+        title: 'Undo',
+        description: 'Reverted to previous state',
+        type: 'info',
+        icon: 'undo'
+      });
     }
   };
 
   const handleRedo = () => {
     if (historyIndex < history.length - 1) {
-      setHistoryIndex(prev => prev + 1);
-      setStyles(history[historyIndex + 1]);
+      isUndoRedoRef.current = true;
+      const nextIndex = historyIndex + 1;
+      setHistoryIndex(nextIndex);
+      setStyles(history[nextIndex]);
+      addNotification({
+        title: 'Redo',
+        description: 'Restored to next state',
+        type: 'info',
+        icon: 'redo'
+      });
     }
   };
 
   const resetStyles = () => {
     setStyles(defaultStyles);
+    addNotification({
+      title: 'Reset',
+      description: 'Styles have been reset to default',
+      type: 'info',
+      icon: 'refresh'
+    });
+  };
+
+  const applyTheme = (themeName) => {
+    const theme = themes[themeName];
+    if (theme) {
+      setStyles(prev => ({ ...prev, ...theme }));
+      setShowThemes(false);
+      addNotification({
+        title: 'Theme Applied',
+        description: `${themeName.charAt(0).toUpperCase() + themeName.slice(1)} theme has been applied`,
+        type: 'success',
+        icon: 'sparkles'
+      });
+    }
+  };
+
+  const generateTheme = () => {
+    // Generate a random theme from current styles
+    const colors = ['#6366F1', '#06B6D4', '#F43F5E', '#F59E0B', '#8B5CF6', '#10B981', '#EC4899'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const randomColor2 = colors[Math.floor(Math.random() * colors.length)];
+    
+    const newTheme = {
+      ...styles,
+      gradientFrom: randomColor,
+      gradientTo: randomColor2,
+      gradientType: Math.random() > 0.5 ? 'linear' : 'radial',
+      gradientAngle: Math.floor(Math.random() * 360),
+      glowColor: randomColor,
+      glowSize: Math.random() > 0.6 ? Math.floor(Math.random() * 40) + 10 : 0,
+      animationType: ['none', 'pulse', 'float', 'glow'][Math.floor(Math.random() * 4)],
+    };
+    
+    setStyles(newTheme);
+    addNotification({
+      title: 'Theme Generated 🎨',
+      description: 'New random theme has been applied',
+      type: 'success',
+      icon: 'sparkles'
+    });
+  };
+
+  const downloadComponent = () => {
+    const code = generateComponentCode();
+    const blob = new Blob([code], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${componentName}.jsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    addNotification({
+      title: 'Component Downloaded',
+      description: `${componentName}.jsx has been saved`,
+      type: 'success',
+      icon: 'download'
+    });
   };
 
   // Generate CSS
@@ -113,13 +372,13 @@ export default function DesignStudio() {
       borderRadius: `${styles.borderRadius}px`,
       border: `${styles.borderWidth}px solid ${styles.borderColor}`,
       boxShadow: `0 ${styles.shadowSize}px ${styles.shadowSize * 2}px rgba(0,0,0,${styles.shadowOpacity/100})`,
-      fontSize: styles.textSize,
+      fontSize: `${styles.textSize}px`,
       fontWeight: styles.textWeight,
       textAlign: styles.textAlign,
       opacity: styles.textOpacity / 100,
       backdropFilter: styles.blur !== '0' ? `blur(${styles.blur}px)` : 'none',
-      transform: `rotate(${styles.rotate}deg) scale(${styles.scale/100}) translate(${styles.translateX}px, ${styles.translateY}px)`,
-      transition: 'all 0.3s ease',
+      transform: `perspective(${styles.perspective}px) rotateX(${styles.rotateX}deg) rotateY(${styles.rotateY}deg) rotate(${styles.rotate}deg) scale(${styles.scale/100}) translate(${styles.translateX}px, ${styles.translateY}px)`,
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       gap: `${styles.gap}px`,
       display: 'flex',
       flexDirection: 'column',
@@ -142,6 +401,7 @@ export default function DesignStudio() {
         shimmer: `shimmer ${styles.animationDuration}ms ease-in-out ${styles.animationIteration}`,
         wiggle: `wiggle ${styles.animationDuration}ms ease-in-out ${styles.animationIteration}`,
         spin: `spin ${styles.animationDuration}ms linear ${styles.animationIteration}`,
+        '3d-rotate': `rotate3d ${styles.animationDuration}ms ease-in-out ${styles.animationIteration}`,
       };
       styleObj.animation = animations[styles.animationType] || animations.pulse;
     }
@@ -161,12 +421,13 @@ export default function DesignStudio() {
     }
 
     return Object.entries(styleObj)
-      .filter(([_, value]) => value !== undefined && value !== 'none' && value !== '0px' && value !== '0deg' && value !== '100%')
+      .filter(([_, value]) => value !== undefined && value !== 'none' && value !== '0px' && value !== '0deg' && value !== '100%' && value !== '')
       .map(([key, value]) => {
+        const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
         if (typeof value === 'string' && value.includes('rgba')) {
-          return `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value};`;
+          return `${cssKey}: ${value};`;
         }
-        return `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value};`;
+        return `${cssKey}: ${value};`;
       })
       .join('\n  ');
   };
@@ -174,22 +435,21 @@ export default function DesignStudio() {
   // Generate Component Code
   const generateComponentCode = () => {
     const css = generateCSS();
+    const styleText = css ? `\n  ${css}\n` : '';
     return `// ${componentName}.jsx
 import React from 'react';
 
 const ${componentName} = ({ className, children, ...props }) => {
-  const styles = {
-    ${css}
-  };
+  const styles = {${styleText}  };
 
   return (
     <div style={styles} className={className} {...props}>
       {children || (
         <>
-          <h3 style={{ margin: 0, color: '${styles.textColor}' }}>
+          <h3 style={{ margin: 0, color: '${styles.textColor || '#FFFFFF'}', fontSize: '${styles.textSize || '20'}px' }}>
             ${componentName}
           </h3>
-          <p style={{ opacity: 0.7, margin: '8px 0 0 0', color: '${styles.textColor}' }}>
+          <p style={{ opacity: 0.7, margin: '8px 0 0 0', color: '${styles.textColor || '#FFFFFF'}' }}>
             Built with Design Studio
           </p>
         </>
@@ -206,26 +466,26 @@ export default ${componentName};`;
     const classes = [];
     
     if (styles.gradientType !== 'none') {
-      classes.push(`bg-gradient-to-br from-[${styles.gradientFrom}] to-[${styles.gradientTo}]`);
+      classes.push('bg-gradient-to-br ' + 'from-[' + styles.gradientFrom + '] ' + 'to-[' + styles.gradientTo + ']');
     } else {
-      classes.push(`bg-[${styles.bgColor}]`);
+      classes.push('bg-[' + styles.bgColor + ']');
     }
     
-    classes.push(`text-[${styles.textColor}]`);
-    classes.push(`px-[${styles.paddingX}px] py-[${styles.paddingY}px]`);
-    classes.push(`w-[${styles.width}%] max-w-[${styles.maxWidth}px]`);
-    classes.push(`mx-auto rounded-[${styles.borderRadius}px]`);
-    classes.push(`border-[${styles.borderWidth}px] border-[${styles.borderColor}]`);
-    classes.push(`shadow-[0_${styles.shadowSize}px_${styles.shadowSize*2}px_rgba(0,0,0,${styles.shadowOpacity/100})]`);
-    classes.push(`text-[${styles.textSize}] font-[${styles.textWeight}] text-${styles.textAlign}`);
-    classes.push(`opacity-[${styles.textOpacity/100}]`);
+    classes.push('text-[' + styles.textColor + ']');
+    classes.push('px-[' + styles.paddingX + 'px] ' + 'py-[' + styles.paddingY + 'px]');
+    classes.push('w-[' + styles.width + '%] ' + 'max-w-[' + styles.maxWidth + 'px]');
+    classes.push('mx-auto ' + 'rounded-[' + styles.borderRadius + 'px]');
+    classes.push('border-[' + styles.borderWidth + 'px] ' + 'border-[' + styles.borderColor + ']');
+    classes.push('shadow-[0_' + styles.shadowSize + 'px_' + (styles.shadowSize*2) + 'px_rgba(0,0,0,' + (styles.shadowOpacity/100) + ')]');
+    classes.push('text-[' + styles.textSize + 'px] ' + 'font-[' + styles.textWeight + '] ' + 'text-' + styles.textAlign);
+    classes.push('opacity-[' + (styles.textOpacity/100) + ']');
     
     if (styles.blur !== '0') {
-      classes.push(`backdrop-blur-[${styles.blur}px]`);
+      classes.push('backdrop-blur-[' + styles.blur + 'px]');
     }
     
     if (styles.glowSize !== '0') {
-      classes.push(`shadow-[0_0_${styles.glowSize}px_${styles.glowColor}]`);
+      classes.push('shadow-[0_0_' + styles.glowSize + 'px_' + styles.glowColor + ']');
     }
     
     if (styles.animationType !== 'none') {
@@ -237,6 +497,7 @@ export default ${componentName};`;
         shimmer: 'animate-shimmer',
         wiggle: 'animate-wiggle',
         spin: 'animate-spin',
+        '3d-rotate': 'animate-3d-rotate',
       };
       classes.push(animClasses[styles.animationType]);
     }
@@ -250,7 +511,18 @@ export default ${componentName};`;
       classes.push(textureClasses[styles.gradientTexture]);
     }
     
-    return classes.join(' ');
+    // 3D transforms
+    if (styles.perspective !== '1000') {
+      classes.push('perspective-[' + styles.perspective + 'px]');
+    }
+    if (styles.rotateX !== '0') {
+      classes.push('rotateX-[' + styles.rotateX + 'deg]');
+    }
+    if (styles.rotateY !== '0') {
+      classes.push('rotateY-[' + styles.rotateY + 'deg]');
+    }
+    
+    return classes.filter(c => c && !c.includes('undefined')).join(' ');
   };
 
   const code = generateComponentCode();
@@ -259,6 +531,12 @@ export default ${componentName};`;
   const copyCode = () => {
     navigator.clipboard.writeText(code).then(() => {
       setCopied(true);
+      addNotification({
+        title: 'Copied!',
+        description: 'Component code copied to clipboard',
+        type: 'success',
+        icon: 'copy'
+      });
       setTimeout(() => setCopied(false), 2000);
     });
   };
@@ -266,22 +544,19 @@ export default ${componentName};`;
   const copyTailwind = () => {
     navigator.clipboard.writeText(tailwindClasses).then(() => {
       setCopiedTailwind(true);
+      addNotification({
+        title: 'Copied!',
+        description: 'Tailwind classes copied to clipboard',
+        type: 'success',
+        icon: 'copy'
+      });
       setTimeout(() => setCopiedTailwind(false), 2000);
     });
   };
 
-  const downloadComponent = () => {
-    const blob = new Blob([code], { type: 'text/javascript' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${componentName}.jsx`;
-    a.click();
-  };
-
   // Slider component
   const SliderControl = ({ label, value, min, max, step, onChange, suffix = '', icon: Icon }) => (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           {Icon && <Icon className="w-3 h-3 text-slate-500" />}
@@ -296,11 +571,13 @@ export default ${componentName};`;
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full h-1 bg-slate-800 rounded-full appearance-none cursor-pointer accent-brand-500
-          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3
-          [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-brand-500
-          [&::-webkit-slider-thumb]:shadow-glow [&::-webkit-slider-thumb]:transition-all
-          [&::-webkit-slider-thumb]:hover:scale-110"
+        className="w-full h-1 bg-slate-800 rounded-full appearance-none cursor-pointer
+          accent-primary-500
+          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
+          [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r 
+          [&::-webkit-slider-thumb]:from-primary-500 [&::-webkit-slider-thumb]:to-secondary-400
+          [&::-webkit-slider-thumb]:shadow-[0_0_20px_rgba(99,102,241,0.3)]
+          [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:hover:scale-110"
       />
     </div>
   );
@@ -313,13 +590,13 @@ export default ${componentName};`;
         type="color"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-7 h-7 rounded border border-white/10 bg-transparent cursor-pointer hover:scale-110 transition-transform"
+        className="w-8 h-8 rounded-xl border border-white/10 bg-transparent cursor-pointer hover:scale-110 transition-transform"
       />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 bg-[#0F172A] border border-white/5 rounded px-2 py-0.5 text-[10px] font-mono text-white focus:ring-1 focus:ring-brand-500 outline-none"
+        className="flex-1 bg-[#0F172A]/50 border border-white/5 rounded-lg px-2 py-1 text-[10px] font-mono text-white focus:ring-1 focus:ring-primary-500 outline-none"
       />
     </div>
   );
@@ -332,7 +609,7 @@ export default ${componentName};`;
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-[#0F172A] border border-white/5 rounded px-2 py-0.5 text-[10px] text-white focus:ring-1 focus:ring-brand-500 outline-none"
+        className="bg-[#0F172A]/50 border border-white/5 rounded-lg px-2 py-1 text-[10px] text-white focus:ring-1 focus:ring-primary-500 outline-none"
       >
         {options.map(opt => (
           <option key={opt} value={opt}>{opt}</option>
@@ -341,85 +618,176 @@ export default ${componentName};`;
     </div>
   );
 
+  const ControlGroup = ({ label, icon: Icon, children }) => (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+        <Icon className="w-3.5 h-3.5" />
+        {label}
+      </div>
+      <div className="space-y-2">
+        {children}
+      </div>
+    </div>
+  );
+
   return (
-    <div className={`h-[calc(100vh-6rem)] ${isFullscreen ? 'fixed inset-0 z-50 bg-[#050816] p-4' : ''}`}>
-      <div className="flex flex-col h-full gap-3">
+    <div className={`w-full ${isFullscreen ? 'fixed inset-0 z-[60] bg-[#0A0A0F] p-4 h-screen' : 'h-[calc(100vh-6rem)]'}`}>
+      <div className="flex flex-col h-full gap-4">
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-white">Design Studio</h1>
-            <input
-              type="text"
-              value={componentName}
-              onChange={(e) => setComponentName(e.target.value)}
-              className="bg-[#0F172A] border border-white/10 rounded-lg px-3 py-1 text-sm text-white focus:ring-1 focus:ring-brand-500 outline-none w-40"
-              placeholder="Component name"
-            />
+        <div className="glass-gradient p-4 relative flex items-center justify-between flex-wrap gap-3 z-40 !overflow-visible">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl animate-float-slow pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary-500/10 rounded-full blur-3xl animate-float-medium pointer-events-none" />
+          
+          <div className="relative flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-[0_0_30px_rgba(99,102,241,0.2)] animate-float-slow">
+              <Layers className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gradient-cyber">FuncLexa Design Studio</h1>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={componentName}
+                  onChange={(e) => setComponentName(e.target.value)}
+                  className="bg-[#0F172A]/50 border border-white/10 rounded-lg px-3 py-0.5 text-xs text-white focus:ring-1 focus:ring-primary-500 outline-none w-32"
+                  placeholder="Component name"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
+          
+          <div className="relative flex items-center gap-1">
+            {/* Undo/Redo */}
             <button
-              onClick={handleUndo}
+              id="btn-undo"
+              onClick={() => {
+                console.log("Undo button clicked! historyIndex:", historyIndex);
+                handleUndo();
+              }}
               disabled={historyIndex === 0}
-              className="p-1.5 rounded hover:bg-white/5 disabled:opacity-30 transition"
+              className="p-2 rounded-xl hover:bg-white/5 disabled:opacity-30 transition-all duration-300 hover:scale-110"
+              title="Undo (Ctrl+Z)"
             >
               <Undo className="w-4 h-4 text-slate-400" />
             </button>
             <button
-              onClick={handleRedo}
+              id="btn-redo"
+              onClick={() => {
+                console.log("Redo button clicked! historyIndex:", historyIndex);
+                handleRedo();
+              }}
               disabled={historyIndex === history.length - 1}
-              className="p-1.5 rounded hover:bg-white/5 disabled:opacity-30 transition"
+              className="p-2 rounded-xl hover:bg-white/5 disabled:opacity-30 transition-all duration-300 hover:scale-110"
+              title="Redo (Ctrl+Y)"
             >
               <Redo className="w-4 h-4 text-slate-400" />
             </button>
+            
+            {/* Reset */}
             <button
-              onClick={resetStyles}
-              className="p-1.5 rounded hover:bg-white/5 transition"
+              id="btn-reset"
+              onClick={() => {
+                console.log("Reset button clicked!");
+                resetStyles();
+              }}
+              className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300 hover:scale-110"
+              title="Reset Styles"
             >
               <RefreshCw className="w-4 h-4 text-slate-400" />
             </button>
+
+            {/* Themes Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  console.log("Themes button clicked! Current showThemes:", showThemes);
+                  setShowThemes(!showThemes);
+                }}
+                className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300 hover:scale-110 bg-gradient-to-r from-primary-500/20 to-secondary-500/20"
+                title="Apply Theme"
+              >
+                <Palette className="w-4 h-4 text-gradient-cyber" />
+              </button>
+              {showThemes && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#0F172A] border border-white/10 rounded-xl shadow-3d backdrop-blur-xl overflow-hidden z-50 animate-slide-up">
+                  <div className="p-2">
+                    <div className="px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                      Themes
+                    </div>
+                    {Object.keys(themes).map((theme) => (
+                      <button
+                        key={theme}
+                        onClick={() => applyTheme(theme)}
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 transition text-sm text-white capitalize"
+                      >
+                        {theme}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Generate Theme */}
             <button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-1.5 rounded hover:bg-white/5 transition"
+              onClick={() => {
+                console.log("Generate Theme clicked!");
+                generateTheme();
+              }}
+              className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300 hover:scale-110"
+              title="Generate Random Theme"
+            >
+              <Wand2 className="w-4 h-4 text-warm-400" />
+            </button>
+
+            {/* Fullscreen */}
+            <button
+              onClick={() => {
+                console.log("Fullscreen button clicked! Current isFullscreen:", isFullscreen);
+                setIsFullscreen(!isFullscreen);
+              }}
+              className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300 hover:scale-110"
+              title="Toggle Fullscreen"
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4 text-slate-400" /> : <Maximize2 className="w-4 h-4 text-slate-400" />}
             </button>
+
+            {/* Download */}
             <button
               onClick={downloadComponent}
-              className="p-1.5 rounded hover:bg-white/5 transition"
+              className="p-2 rounded-xl hover:bg-white/5 transition-all duration-300 hover:scale-110 bg-primary-500/10"
+              title="Download Component"
             >
-              <Download className="w-4 h-4 text-slate-400" />
+              <Download className="w-4 h-4 text-primary-400" />
             </button>
           </div>
         </div>
 
         {/* Main Layout */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0">
           {/* Left Panel - Controls */}
-          <div className="lg:col-span-3 bg-[#0F172A] border border-white/5 rounded-xl overflow-hidden flex flex-col">
+          <div className="lg:col-span-3 panel-3d overflow-hidden flex flex-col">
             <div className="flex border-b border-white/5">
-              {['properties', 'tailwind'].map(tab => (
+              {['properties', 'tailwind', '3d'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 px-3 py-1.5 text-[10px] font-medium transition ${
+                  className={`flex-1 px-3 py-2 text-[10px] font-medium transition-all duration-300 ${
                     activeTab === tab 
-                      ? 'bg-brand-500/20 text-brand-400 border-b-2 border-brand-400' 
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-gradient-to-r from-primary-500/20 to-secondary-500/20 text-primary-400 border-b-2 border-primary-400' 
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {tab === 'properties' ? '🎨 Properties' : '📋 Tailwind'}
+                  {tab === 'properties' ? '🎨 Style' : tab === 'tailwind' ? '📋 Tailwind' : '🌀 3D'}
                 </button>
               ))}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-4">
-              {activeTab === 'properties' ? (
+            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+              {activeTab === 'properties' && (
                 <>
                   {/* Background */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-                      <Palette className="w-3 h-3" /> Background
-                    </div>
+                  <ControlGroup label="Background" icon={Palette}>
                     <ColorControl 
                       label="Color" 
                       value={styles.bgColor} 
@@ -471,13 +839,10 @@ export default ${componentName};`;
                       onChange={(v) => handleChange('gradientTexture', v)}
                       icon={Droplet}
                     />
-                  </div>
+                  </ControlGroup>
 
-                  {/* Text */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-                      <Type className="w-3 h-3" /> Typography
-                    </div>
+                  {/* Typography */}
+                  <ControlGroup label="Typography" icon={Type}>
                     <ColorControl 
                       label="Color" 
                       value={styles.textColor} 
@@ -490,7 +855,7 @@ export default ${componentName};`;
                       max={60}
                       step={1}
                       suffix="px"
-                      onChange={(v) => handleChange('textSize', `${v}px`)}
+                      onChange={(v) => handleChange('textSize', `${v}`)}
                     />
                     <SelectControl
                       label="Weight"
@@ -513,13 +878,10 @@ export default ${componentName};`;
                       suffix="%"
                       onChange={(v) => handleChange('textOpacity', v)}
                     />
-                  </div>
+                  </ControlGroup>
 
                   {/* Layout */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-                      <Layout className="w-3 h-3" /> Layout
-                    </div>
+                  <ControlGroup label="Layout" icon={Layout}>
                     <SliderControl
                       label="Padding X"
                       value={styles.paddingX}
@@ -574,13 +936,10 @@ export default ${componentName};`;
                       suffix="px"
                       onChange={(v) => handleChange('borderRadius', v)}
                     />
-                  </div>
+                  </ControlGroup>
 
                   {/* Effects */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-                      <Eye className="w-3 h-3" /> Effects
-                    </div>
+                  <ControlGroup label="Effects" icon={Eye}>
                     <SliderControl
                       label="Border Width"
                       value={styles.borderWidth}
@@ -638,17 +997,14 @@ export default ${componentName};`;
                         onChange={(v) => handleChange('glowColor', v)} 
                       />
                     )}
-                  </div>
+                  </ControlGroup>
 
                   {/* Animation */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-                      <Sparkles className="w-3 h-3" /> Animation
-                    </div>
+                  <ControlGroup label="Animation" icon={Sparkles}>
                     <SelectControl
                       label="Type"
                       value={styles.animationType}
-                      options={['none', 'pulse', 'bounce', 'float', 'glow', 'shimmer', 'wiggle', 'spin']}
+                      options={['none', 'pulse', 'bounce', 'float', 'glow', 'shimmer', 'wiggle', 'spin', '3d-rotate']}
                       onChange={(v) => handleChange('animationType', v)}
                     />
                     {styles.animationType !== 'none' && (
@@ -670,77 +1026,111 @@ export default ${componentName};`;
                         />
                       </>
                     )}
-                  </div>
-
-                  {/* Transform */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
-                      <Move className="w-3 h-3" /> Transform
-                    </div>
-                    <SliderControl
-                      label="Rotate"
-                      value={styles.rotate}
-                      min={-180}
-                      max={180}
-                      step={5}
-                      suffix="°"
-                      onChange={(v) => handleChange('rotate', v)}
-                    />
-                    <SliderControl
-                      label="Scale"
-                      value={styles.scale}
-                      min={50}
-                      max={200}
-                      step={5}
-                      suffix="%"
-                      onChange={(v) => handleChange('scale', v)}
-                    />
-                    <SliderControl
-                      label="Translate X"
-                      value={styles.translateX}
-                      min={-100}
-                      max={100}
-                      step={5}
-                      suffix="px"
-                      onChange={(v) => handleChange('translateX', v)}
-                    />
-                    <SliderControl
-                      label="Translate Y"
-                      value={styles.translateY}
-                      min={-100}
-                      max={100}
-                      step={5}
-                      suffix="px"
-                      onChange={(v) => handleChange('translateY', v)}
-                    />
-                  </div>
+                  </ControlGroup>
                 </>
-              ) : (
+              )}
+
+              {activeTab === 'tailwind' && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-slate-400">Tailwind Classes</span>
                     <button
                       onClick={copyTailwind}
-                      className="text-[10px] text-brand-400 hover:text-brand-300 flex items-center gap-1"
+                      className="text-[10px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition"
                     >
                       {copiedTailwind ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      Copy
+                      {copiedTailwind ? 'Copied!' : 'Copy'}
                     </button>
                   </div>
-                  <div className="bg-[#0F172A]/50 border border-white/5 rounded-lg p-3">
-                    <pre className="text-[10px] font-mono text-green-300 overflow-auto whitespace-pre-wrap break-all">
-                      {tailwindClasses}
+                  <div className="bg-[#0A0A0F]/50 border border-white/5 rounded-xl p-4">
+                    <pre className="text-[10px] font-mono text-green-300 overflow-auto whitespace-pre-wrap break-all leading-relaxed">
+                      {tailwindClasses || 'No classes generated'}
                     </pre>
                   </div>
                 </div>
+              )}
+
+              {activeTab === '3d' && (
+                <ControlGroup label="3D Transform" icon={Box}>
+                  <SliderControl
+                    label="Perspective"
+                    value={styles.perspective}
+                    min={200}
+                    max={2000}
+                    step={50}
+                    suffix="px"
+                    onChange={(v) => handleChange('perspective', v)}
+                  />
+                  <SliderControl
+                    label="Rotate X"
+                    value={styles.rotateX}
+                    min={-45}
+                    max={45}
+                    step={1}
+                    suffix="°"
+                    onChange={(v) => handleChange('rotateX', v)}
+                  />
+                  <SliderControl
+                    label="Rotate Y"
+                    value={styles.rotateY}
+                    min={-45}
+                    max={45}
+                    step={1}
+                    suffix="°"
+                    onChange={(v) => handleChange('rotateY', v)}
+                  />
+                  <SliderControl
+                    label="Rotate Z"
+                    value={styles.rotate}
+                    min={-180}
+                    max={180}
+                    step={5}
+                    suffix="°"
+                    onChange={(v) => handleChange('rotate', v)}
+                  />
+                  <SliderControl
+                    label="Scale"
+                    value={styles.scale}
+                    min={50}
+                    max={200}
+                    step={5}
+                    suffix="%"
+                    onChange={(v) => handleChange('scale', v)}
+                  />
+                  <SliderControl
+                    label="Translate X"
+                    value={styles.translateX}
+                    min={-100}
+                    max={100}
+                    step={5}
+                    suffix="px"
+                    onChange={(v) => handleChange('translateX', v)}
+                  />
+                  <SliderControl
+                    label="Translate Y"
+                    value={styles.translateY}
+                    min={-100}
+                    max={100}
+                    step={5}
+                    suffix="px"
+                    onChange={(v) => handleChange('translateY', v)}
+                  />
+                </ControlGroup>
               )}
             </div>
           </div>
 
           {/* Center Panel - Canvas */}
-          <div className="lg:col-span-6 bg-[#0F172A] border border-white/5 rounded-xl p-6 flex items-center justify-center relative overflow-hidden">
+          <div className="lg:col-span-6 panel-3d p-6 flex items-center justify-center relative overflow-hidden bg-[#0A0A0F]/50">
             <div 
-              className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"
+              className="absolute inset-0 opacity-[0.03]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+                `,
+                backgroundSize: '30px 30px',
+              }}
             />
             
             <div 
@@ -764,12 +1154,12 @@ export default ${componentName};`;
                 boxShadow: styles.glowSize !== '0' 
                   ? `0 0 ${styles.glowSize}px ${styles.glowColor}`
                   : `0 ${styles.shadowSize}px ${styles.shadowSize * 2}px rgba(0,0,0,${styles.shadowOpacity/100})`,
-                fontSize: styles.textSize,
+                fontSize: `${styles.textSize}px`,
                 fontWeight: styles.textWeight,
                 textAlign: styles.textAlign,
                 opacity: styles.textOpacity / 100,
                 backdropFilter: styles.blur !== '0' ? `blur(${styles.blur}px)` : 'none',
-                transform: `rotate(${styles.rotate}deg) scale(${styles.scale/100}) translate(${styles.translateX}px, ${styles.translateY}px)`,
+                transform: `perspective(${styles.perspective}px) rotateX(${styles.rotateX}deg) rotateY(${styles.rotateY}deg) rotate(${styles.rotate}deg) scale(${styles.scale/100}) translate(${styles.translateX}px, ${styles.translateY}px)`,
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 gap: `${styles.gap}px`,
                 display: 'flex',
@@ -796,7 +1186,7 @@ export default ${componentName};`;
               className="flex flex-col items-center justify-center p-6 relative"
             >
               {/* Content */}
-              <h3 style={{ margin: 0, color: styles.textColor, fontSize: styles.textSize }}>
+              <h3 style={{ margin: 0, color: styles.textColor, fontSize: `${styles.textSize}px` }}>
                 {componentName}
               </h3>
               <p style={{ opacity: 0.7, margin: '8px 0 0 0', color: styles.textColor, fontSize: '14px' }}>
@@ -805,26 +1195,38 @@ export default ${componentName};`;
               
               {/* Hover indicator */}
               {isHovered && (
-                <div className="absolute top-2 right-2 text-[8px] text-slate-500 bg-black/50 px-2 py-0.5 rounded-full">
-                  ✦ Interactive
+                <div className="absolute top-3 right-3 text-[8px] text-slate-500 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full border border-white/5 animate-float-slow">
+                  ✦ 3D Interactive
                 </div>
               )}
             </div>
           </div>
 
           {/* Right Panel - Code */}
-          <div className="lg:col-span-3 bg-[#0F172A] border border-white/5 rounded-xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
-              <span className="text-[10px] font-medium text-slate-400">React Component</span>
-              <button
-                onClick={copyCode}
-                className="text-[10px] text-brand-400 hover:text-brand-300 flex items-center gap-1"
-              >
-                {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                Copy
-              </button>
+          <div className="lg:col-span-3 panel-3d overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+              <span className="text-[10px] font-medium text-slate-400 flex items-center gap-2">
+                <Code className="w-3 h-3" />
+                React Component
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={copyCode}
+                  className="text-[10px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition"
+                >
+                  {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
+                <button
+                  onClick={downloadComponent}
+                  className="text-[10px] text-secondary-400 hover:text-secondary-300 flex items-center gap-1 transition"
+                >
+                  <Download className="w-3 h-3" />
+                  Save
+                </button>
+              </div>
             </div>
-            <div className="flex-1 overflow-auto p-3">
+            <div className="flex-1 overflow-auto p-4">
               <pre className="text-[10px] font-mono text-green-300 whitespace-pre-wrap leading-relaxed">
                 {code}
               </pre>
@@ -834,14 +1236,18 @@ export default ${componentName};`;
       </div>
 
       {/* Custom Animations */}
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.8; }
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-10px) rotate(2deg); }
         }
         @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(94, 106, 210, 0.3); }
-          50% { box-shadow: 0 0 60px rgba(94, 106, 210, 0.6); }
+          0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+          50% { box-shadow: 0 0 60px rgba(99, 102, 241, 0.6); }
         }
         @keyframes shimmer {
           0% { background-position: -200% center; }
@@ -851,7 +1257,15 @@ export default ${componentName};`;
           0%, 100% { transform: rotate(-3deg); }
           50% { transform: rotate(3deg); }
         }
-      `}</style>
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes rotate3d {
+          0%, 100% { transform: perspective(1000px) rotateX(-5deg) rotateY(5deg); }
+          50% { transform: perspective(1000px) rotateX(5deg) rotateY(-5deg); }
+        }
+      `}} />
     </div>
   );
 }
