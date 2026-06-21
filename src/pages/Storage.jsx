@@ -45,7 +45,7 @@ export default function Storage() {
         <div>
           <h1 className="text-2xl font-bold text-gradient-cyber flex items-center gap-2">
             <HardDrive className="w-6 h-6 text-indigo-400" />
-            FuncLexa Storage Drive
+            FuncSilo Storage Drive
           </h1>
           <p className="text-sm text-slate-400 mt-1">
             Browse and manage files processed or uploaded to your workspace drive.

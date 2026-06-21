@@ -30,17 +30,20 @@ export default function Sidebar({ onClose }) {
         onClose();
         break;
       case 'export-assets': {
+        const getLocalStorageItem = (newKey, oldKey) => {
+          return localStorage.getItem(newKey) || localStorage.getItem(oldKey);
+        };
         const exportData = {
-          favorites: localStorage.getItem('funclexa_favorites') ? JSON.parse(localStorage.getItem('funclexa_favorites')) : [],
-          recent: localStorage.getItem('funclexa_recent') ? JSON.parse(localStorage.getItem('funclexa_recent')) : [],
-          storageItems: localStorage.getItem('funclexa_storage') ? JSON.parse(localStorage.getItem('funclexa_storage')) : [],
+          favorites: getLocalStorageItem('funcsilo_favorites', 'funclexa_favorites') ? JSON.parse(getLocalStorageItem('funcsilo_favorites', 'funclexa_favorites')) : [],
+          recent: getLocalStorageItem('funcsilo_recent', 'funclexa_recent') ? JSON.parse(getLocalStorageItem('funcsilo_recent', 'funclexa_recent')) : [],
+          storageItems: getLocalStorageItem('funcsilo_storage', 'funclexa_storage') ? JSON.parse(getLocalStorageItem('funcsilo_storage', 'funclexa_storage')) : [],
           timestamp: Date.now()
         };
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `funclexa-workspace-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `funcsilo-workspace-${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -59,9 +62,9 @@ export default function Sidebar({ onClose }) {
             reader.onload = (event) => {
               try {
                 const data = JSON.parse(event.target.result);
-                if (data.favorites) localStorage.setItem('funclexa_favorites', JSON.stringify(data.favorites));
-                if (data.recent) localStorage.setItem('funclexa_recent', JSON.stringify(data.recent));
-                if (data.storageItems) localStorage.setItem('funclexa_storage', JSON.stringify(data.storageItems));
+                if (data.favorites) localStorage.setItem('funcsilo_favorites', JSON.stringify(data.favorites));
+                if (data.recent) localStorage.setItem('funcsilo_recent', JSON.stringify(data.recent));
+                if (data.storageItems) localStorage.setItem('funcsilo_storage', JSON.stringify(data.storageItems));
                 alert('🎉 Workspace restored successfully!');
                 window.location.reload();
               } catch (err) {

@@ -2,12 +2,115 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FuncLexa Assets</title>
+
+    <!-- 1. Primary Title Token & Core Keywords (58 chars — safe for full SERP display) -->
+    <title>FuncSilo – Asset & SVG Optimization | FuncLexa</title>
+
+    <!-- 2. Primary SEO Crawling Metadata -->
+    <meta name="description" content="FuncSilo is a free asset optimization workbench. Convert SVGs to React JSX components, compress images and web assets, and manage design tokens instantly." />
+    <meta name="keywords" content="FuncSilo, FuncLexa, SVG to JSX, SVG to React component, asset compression, image optimization, design tokens, vector optimizer, developer tools, web asset pipeline" />
+    <meta name="author" content="Sultan Salauddin Ansari" />
+    <meta name="application-name" content="FuncSilo" />
+
+    <!-- Robots: index/follow + opt into large image thumbnails & uncapped snippets in SERPs -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Canonical: MUST match the real deployed origin. This was previously pointing to
+         funclexa.dev/funcsilo while the app is actually served at funcsilo.funclexa.dev —
+         that mismatch confuses Google about which URL owns this content (same bug as FuncSpan). -->
+    <link rel="canonical" href="https://funcsilo.funclexa.dev/" />
+
+    <!-- Icons — this was still the default /vite.svg placeholder. A generic Vite icon in the
+         browser tab, bookmarks bar, and Google's search result favicon undercuts brand trust
+         and CTR; swap in your real logo before launch. Pointed at /logo.png to match FuncSpan
+         until your FuncSilo-specific icon is ready. -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <meta name="theme-color" content="#0d1117" />
+
+    <!-- 3. Open Graph / Social Preview Cards (LinkedIn, Facebook, Slack, Discord, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FuncLexa" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="FuncSilo – Asset & Vector Optimization Engine" />
+    <meta property="og:description" content="Optimize vectors, compress production assets, and convert SVGs to JSX on one fast, unified developer workbench." />
+    <meta property="og:url" content="https://funcsilo.funclexa.dev/" />
+    <!-- Replace with a real dashboard screenshot at 1200x630 once available -->
+    <meta property="og:image" content="https://funcsilo.funclexa.dev/funcsilo-preview.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="FuncSilo workbench showing SVG to JSX conversion and asset compression" />
+
+    <!-- 4. Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FuncSilo – SVG to JSX & Asset Workbench" />
+    <meta name="twitter:description" content="Convert SVGs to React JSX and crush asset payloads on the fly — right in your browser." />
+    <meta name="twitter:image" content="https://funcsilo.funclexa.dev/funcsilo-preview.png" />
+    <!-- <meta name="twitter:site" content="@yourhandle" /> -->
+    <!-- <meta name="twitter:creator" content="@yourhandle" /> -->
+
+    <!-- 5. Font Preconnect Layout Links -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- 6. JSON-LD Structured Data — what actually earns rich results and AI Overview /
+         answer-engine citations in 2026. No AggregateRating block: don't add fake star
+         ratings, it's a Google spam-policy violation and can get the page demoted. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://funcsilo.funclexa.dev/#software",
+          "name": "FuncSilo",
+          "alternateName": "FuncSilo Asset & Vector Pipeline",
+          "url": "https://funcsilo.funclexa.dev/",
+          "description": "A browser-based asset optimization workbench to convert SVGs to React JSX components, compress web assets, and manage design tokens.",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Any (runs in browser)",
+          "browserRequirements": "Requires JavaScript",
+          "image": "https://funcsilo.funclexa.dev/funcsilo-preview.png",
+          "screenshot": "https://funcsilo.funclexa.dev/funcsilo-preview.png",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "author": { "@id": "https://funclexa.dev/#organization" },
+          "publisher": { "@id": "https://funclexa.dev/#organization" },
+          "isPartOf": { "@id": "https://funclexa.dev/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://funclexa.dev/#organization",
+          "name": "FuncLexa",
+          "url": "https://funclexa.dev/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://funclexa.dev/logo.png"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://funcsilo.funclexa.dev/#webpage",
+          "url": "https://funcsilo.funclexa.dev/",
+          "name": "FuncSilo – SVG to JSX & Asset Optimization Tool",
+          "description": "FuncSilo is a free asset optimization workbench. Convert SVGs to React JSX components, compress images and web assets, and manage design tokens instantly.",
+          "isPartOf": { "@id": "https://funclexa.dev/#organization" },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "url": "https://funcsilo.funclexa.dev/funcsilo-preview.png"
+          },
+          "inLanguage": "en-US"
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

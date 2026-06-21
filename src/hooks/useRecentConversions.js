@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react';
 
-const STORAGE_KEY = 'funclexa_recent';
+const STORAGE_KEY = 'funcsilo_recent';
+
+const getLocalStorageItem = (key) => {
+  const val = localStorage.getItem(key);
+  if (val) return val;
+  const oldKey = key.replace('funcsilo_', 'funclexa_');
+  return localStorage.getItem(oldKey);
+};
 
 export function useRecentConversions() {
   const [conversions, setConversions] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = getLocalStorageItem(STORAGE_KEY);
     if (stored) {
       try {
         setConversions(JSON.parse(stored));

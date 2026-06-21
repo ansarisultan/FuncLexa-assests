@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react';
 
 const STORAGE_KEYS = {
-  FAVORITES: 'funclexa_favorites',
-  RECENT: 'funclexa_recent',
-  STORAGE: 'funclexa_storage',
+  FAVORITES: 'funcsilo_favorites',
+  RECENT: 'funcsilo_recent',
+  STORAGE: 'funcsilo_storage',
+};
+
+const getLocalStorageItem = (key) => {
+  const val = localStorage.getItem(key);
+  if (val) return val;
+  const oldKey = key.replace('funcsilo_', 'funclexa_');
+  return localStorage.getItem(oldKey);
 };
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEYS.FAVORITES);
+    const stored = getLocalStorageItem(STORAGE_KEYS.FAVORITES);
     if (stored) {
       try {
         setFavorites(JSON.parse(stored));
@@ -54,7 +61,7 @@ export function useRecent() {
   const [recent, setRecent] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEYS.RECENT);
+    const stored = getLocalStorageItem(STORAGE_KEYS.RECENT);
     if (stored) {
       try {
         setRecent(JSON.parse(stored));
@@ -90,7 +97,7 @@ export function useStorage() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEYS.STORAGE);
+    const stored = getLocalStorageItem(STORAGE_KEYS.STORAGE);
     if (stored) {
       try {
         setItems(JSON.parse(stored));

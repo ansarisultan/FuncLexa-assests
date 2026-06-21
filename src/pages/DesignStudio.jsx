@@ -643,7 +643,7 @@ export default ${componentName};`;
               <Layers className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gradient-cyber">FuncLexa Design Studio</h1>
+              <h1 className="text-lg font-bold text-gradient-cyber">FuncSilo Design Studio</h1>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -1241,7 +1241,7 @@ export default ${componentName};`;
                 <pre className="text-[10px] font-mono text-cyan-300 whitespace-pre-wrap leading-relaxed">
                   {`<div className="${tailwindClasses}">
   <h3>${componentName}</h3>
-  <p>Built with FuncLexa Design Studio</p>
+  <p>Built with FuncSilo Design Studio</p>
 </div>`}
                 </pre>
               </div>

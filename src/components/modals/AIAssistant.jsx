@@ -134,7 +134,7 @@ export default function AIAssistant({ isOpen, onClose }) {
               </div>
               <h3 className="text-lg font-semibold text-white">How can I help you?</h3>
               <p className="text-sm text-slate-400 max-w-md mt-2">
-                I'm your AI assistant powered by LexaChat for FuncLexa Assets. Ask me about image conversion, 
+                I'm your AI assistant powered by LexaChat for FuncSilo Assets. Ask me about image conversion, 
                 component creation, design themes, or any feature.
               </p>
               
@@ -260,7 +260,7 @@ export default function AIAssistant({ isOpen, onClose }) {
             <span className="flex items-center gap-1.5 sm:gap-2">
               <span>Powered by</span>
               <span className="text-primary-400 font-semibold">LexaChat AI</span>
-              <span>• connected to FuncLexa core</span>
+              <span>• connected to FuncSilo core</span>
             </span>
             <span className="flex items-center gap-1.5 sm:gap-2">
               <span>⌘ + Enter to send</span>

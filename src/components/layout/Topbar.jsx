@@ -200,7 +200,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `funclexa-workspace-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `funcsilo-workspace-${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -251,7 +251,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `funclexa-workspace-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `funcsilo-workspace-${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -275,9 +275,9 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
             reader.onload = (event) => {
               try {
                 const data = JSON.parse(event.target.result);
-                if (data.favorites) localStorage.setItem('funclexa_favorites', JSON.stringify(data.favorites));
-                if (data.recent) localStorage.setItem('funclexa_recent', JSON.stringify(data.recent));
-                if (data.storageItems) localStorage.setItem('funclexa_storage', JSON.stringify(data.storageItems));
+                if (data.favorites) localStorage.setItem('funcsilo_favorites', JSON.stringify(data.favorites));
+                if (data.recent) localStorage.setItem('funcsilo_recent', JSON.stringify(data.recent));
+                if (data.storageItems) localStorage.setItem('funcsilo_storage', JSON.stringify(data.storageItems));
                 alert('🎉 Workspace restored successfully!');
                 window.location.reload();
               } catch (err) {
@@ -431,7 +431,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
             <input
               ref={searchRef}
               type="text"
-              placeholder="Search FuncLexa Assets... (⌘K)"
+              placeholder="Search FuncSilo Assets... (⌘K)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}
@@ -453,7 +453,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
                     <div className="px-3 py-2 flex items-center justify-between border-b border-white/5">
                       <div className="flex items-center gap-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                         <TrendingUp className="w-3 h-3" />
-                        FuncLexa Suggestions
+                        FuncSilo Suggestions
                       </div>
                       <span className="text-[10px] text-slate-500">⌘K to search</span>
                     </div>
@@ -718,7 +718,7 @@ export default function Topbar({ onMenuClick, onAssistantClick }) {
                       FX
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-white">FuncLexa User</div>
+                      <div className="text-sm font-semibold text-white">FuncSilo User</div>
                       <div className="text-xs text-slate-400">Developer • Creator</div>
                     </div>
                   </div>

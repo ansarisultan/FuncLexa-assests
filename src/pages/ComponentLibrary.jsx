@@ -260,7 +260,7 @@ export default function ComponentLibrary() {
         <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gradient-cyber flex items-center gap-3">
-              FuncLexa Design System Library
+              FuncSilo Design System Library
               <span className="text-xs font-normal text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/5">
                 {designThemes.length} themes
               </span>

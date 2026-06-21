@@ -1,0 +1,23 @@
+# FuncSilo
+
+> A free, browser-based asset optimization workbench from the FuncLexa ecosystem.
+> Convert SVGs to React JSX components, compress web assets, and manage design
+> tokens — all in one place.
+
+FuncSilo is a developer tool for turning raw design assets into production-ready
+code and lean files. Drop in an SVG and get a clean React JSX component out;
+run images and other assets through compression before shipping; keep design
+tokens organized in one workbench instead of scattered config files.
+
+## Key capabilities
+- Convert SVG files into React JSX components
+- Compress images and other web assets for production
+- Manage and centralize design tokens
+- Fast, unified workbench for asset/vector workflows
+
+## Links
+- Product: https://funcsilo.funclexa.dev/
+- Ecosystem: https://funclexa.dev/
+
+## Pricing
+Free to use.

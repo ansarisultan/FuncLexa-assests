@@ -260,6 +260,15 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  .text-gradient-animated-funcsilo {
+    background: linear-gradient(to right, #818CF8, #F43F5E, #FB7185, #818CF8);
+    background-size: 300% 300%;
+    animation: textGradientShift 4s ease-in-out infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 @keyframes rotate3d {

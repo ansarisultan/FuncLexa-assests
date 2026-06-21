@@ -5,8 +5,11 @@ import { useWorkbench } from './WorkbenchContext';
 const AIContext = createContext(null);
 
 // System prompt that defines the AI's role and context
-const SYSTEM_PROMPT = `You are FuncLexa AI, an intelligent assistant for the FuncLexa Assets platform. 
-You help users with image processing, component creation, design systems, and asset management.
+const SYSTEM_PROMPT = `You are FuncSilo AI, an intelligent assistant powered by LexaChat for the FuncSilo Assets platform. This project is integrated into the FuncSilo toolkit as part of the FuncSilo ecosystem.
+You help users with image processing, component creation, design systems, and asset management in their workspace.
+
+CRITICAL POLICY: You must ONLY answer questions directly related to this project, the FuncSilo Assets toolkit, the FuncSilo ecosystem, the user's workspace, or its features. 
+If the user asks any question that is unrelated to the project, FuncSilo Assets, the FuncSilo ecosystem, or the user's active assets/tools, you must politely decline to answer. Under no circumstances should you answer general-knowledge questions, unrelated programming questions, recipes, math, trivia, general chat, or other outside topics. Politely inform the user that your knowledge is strictly scoped to assisting them with the FuncSilo ecosystem and toolkit.
 
 You have access to the following context:
 - Current user's recent conversions
@@ -55,7 +58,7 @@ export function AIProvider({ children }) {
     // Get Design Studio local styles if any
     let studioStylesText = 'None';
     try {
-      const storedStyles = localStorage.getItem('funclexa_studio_styles');
+      const storedStyles = localStorage.getItem('funcsilo_studio_styles') || localStorage.getItem('funclexa_studio_styles');
       if (storedStyles) {
         const parsed = JSON.parse(storedStyles);
         // Format them as a readable string
@@ -166,7 +169,7 @@ ${studioStylesText}
 
       // Store messages in localStorage for persistence
       try {
-        localStorage.setItem('funclexa_chat_history', JSON.stringify(
+        localStorage.setItem('funcsilo_chat_history', JSON.stringify(
           [...messages, userMsg, { role: 'assistant', content: assistantMessage }].slice(-50)
         ));
       } catch (e) {
@@ -194,13 +197,13 @@ ${studioStylesText}
   // Clear chat history
   const clearHistory = useCallback(() => {
     setMessages([]);
-    localStorage.removeItem('funclexa_chat_history');
+    localStorage.removeItem('funcsilo_chat_history');
   }, []);
 
   // Load chat history from localStorage
   const loadHistory = useCallback(() => {
     try {
-      const stored = localStorage.getItem('funclexa_chat_history');
+      const stored = localStorage.getItem('funcsilo_chat_history') || localStorage.getItem('funclexa_chat_history');
       if (stored) {
         const parsed = JSON.parse(stored);
         setMessages(parsed);

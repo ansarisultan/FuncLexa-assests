@@ -195,7 +195,7 @@ export default function MediaDesk() {
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <span className="bg-gradient-to-r from-[#31C5DC] via-[#C3DDE3] to-[#6F9CE6] bg-clip-text text-transparent">
-                FuncLexa Media Desk
+                FuncSilo Media Desk
               </span>
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] sm:text-xs font-normal text-slate-400 bg-white/5 px-2.5 py-0.5 rounded-full border border-white/5 flex items-center gap-1">
@@ -212,9 +212,11 @@ export default function MediaDesk() {
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1.5 flex flex-wrap items-center gap-1.5">
               <Shield className="w-3.5 h-3.5 text-green-400" />
-              <span>FuncLexa secure processing</span>
+              <span>FuncSilo secure processing</span>
               <span className="text-slate-600">•</span>
               <span>100% private</span>
+              <span className="text-slate-600">•</span>
+              <a href="https://funcsilo.funclexa.dev" target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:underline font-medium">funcsilo.funclexa.dev</a>
               <span className="text-slate-600">•</span>
               <span className="text-primary-400 font-medium">{selectedFiles.length} files in workspace</span>
             </p>

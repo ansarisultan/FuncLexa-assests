@@ -27,7 +27,7 @@ export default function Recent() {
         <div>
           <h1 className="text-2xl font-bold text-gradient-cyber flex items-center gap-2">
             <Clock className="w-6 h-6 text-indigo-400" />
-            FuncLexa Recent Activity
+            FuncSilo Recent Activity
           </h1>
           <p className="text-sm text-slate-400 mt-1">
             Track and manage your recent conversions and operations.
